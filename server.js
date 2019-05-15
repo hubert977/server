@@ -20,7 +20,7 @@ class excel {
             database: 'pue71'
         });
         connection.connect();
-            connection.query('SELECT id_comparator FROM weighting', (error, results, fields) => {
+            connection.query('SELECT id_comparator FROM weighting ORDER BY id_comparator DESC LIMIT 1', (error, results, fields) => {
             if (error) throw error;
                 let results_json = JSON.stringify(results);
                 let resultjson = JSON.parse(results_json);
@@ -51,22 +51,20 @@ class excel {
                 if (error) throw error;
                 let results_json = JSON.stringify(results);
                 let resultjson = JSON.parse(results_json);
-                workbook.xlsx.readFile('XtraReport1.xlsx').then(()  => {
+                workbook.xlsx.readFile('zeszyt.xlsx').then(()  => {
                     let worksheet = workbook.getWorksheet(1);
                     let CountRow = 53
                     const Cell = 20;
                     for(let j=0;j<resultjson.length; j++)
                     {
+                    console.log(resultjson[j]);
                     let row_53 = worksheet.getRow(CountRow);
                     row_53.getCell(Cell).value = resultjson[j].mass_in_unit;
-                    console.log(CountRow);
                     row_53.commit();
-                    if(j>0)
-                    {
-                        CountRow = CountRow+2;
+                        CountRow = CountRow+1;
+                    
                     }
-                    }
-                    workbook.xlsx.writeFile(`files/data${i}.xlsx`);
+                    workbook.xlsx.writeFile(`files/data_${i}.xlsx`);
                 }).catch((err)=>{
                         console.log(err);
                 })
