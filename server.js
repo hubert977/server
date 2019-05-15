@@ -20,7 +20,7 @@ class excel {
             database: 'pue71'
         });
         connection.connect();
-            connection.query('SELECT id_comparator FROM weighting LIMIT 1', (error, results, fields) => {
+            connection.query('SELECT id_comparator FROM weighting', (error, results, fields) => {
             if (error) throw error;
                 let results_json = JSON.stringify(results);
                 let resultjson = JSON.parse(results_json);
@@ -51,16 +51,24 @@ class excel {
                 if (error) throw error;
                 let results_json = JSON.stringify(results);
                 let resultjson = JSON.parse(results_json);
-                workbook.xlsx.readFile('XtraReport1.xlsx').then(()=> {
-                    for(let j=0;j<resultjson.length; j++)
-                    {   
+                workbook.xlsx.readFile('XtraReport1.xlsx').then(()  => {
                     let worksheet = workbook.getWorksheet(1);
-                    let row_0 = worksheet.getRow(53);
-                    console.log(resultjson);
-                    row_0.getCell(20).value = resultjson[0].mass_in_unit;
-                    row_0.commit();
+                    let CountRow = 53
+                    const Cell = 20;
+                    for(let j=0;j<resultjson.length; j++)
+                    {
+                    let row_53 = worksheet.getRow(CountRow);
+                    row_53.getCell(Cell).value = resultjson[j].mass_in_unit;
+                    console.log(CountRow);
+                    row_53.commit();
+                    if(j>0)
+                    {
+                        CountRow = CountRow+2;
                     }
-                    return workbook.xlsx.writeFile('files/data.xlsx');
+                    }
+                    workbook.xlsx.writeFile(`files/data${i}.xlsx`);
+                }).catch((err)=>{
+                        console.log(err);
                 })
             });
         }
