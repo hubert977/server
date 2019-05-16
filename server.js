@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const Excel = require('exceljs');
 const workbook = new Excel.Workbook();
+const cors = require('cors')
 class excel {
     constructor()
     {
@@ -51,20 +52,25 @@ class excel {
                 if (error) throw error;
                 let results_json = JSON.stringify(results);
                 let resultjson = JSON.parse(results_json);
-                workbook.xlsx.readFile('zeszyt.xlsx').then(()  => {
+                workbook.xlsx.readFile('template.xlsx').then(()  => {
                     let worksheet = workbook.getWorksheet(1);
-                    let CountRow = 53
-                    const Cell = 20;
+                    let CountRow = 71;
+                    const Cell = 6;
+                    let next_row = 3;
                     for(let j=0;j<resultjson.length; j++)
                     {
                     console.log(resultjson[j]);
                     let row_53 = worksheet.getRow(CountRow);
-                    row_53.getCell(Cell).value = resultjson[j].mass_in_unit;
+                    row_53.getCell(Cell).value = resultjson[j].mass_in_unit + ' ' +  '[g]';
                     row_53.commit();
                         CountRow = CountRow+1;
-                    
+                        if(j==next_row) {
+                            CountRow = CountRow + 3;
+                            next_row = next_row + 4;
+                        }
+                        console.log(resultjson[j])
                     }
-                    workbook.xlsx.writeFile(`files/data_${i}.xlsx`);
+                    workbook.xlsx.writeFile(`files/MySampleExportDataSheet.xlsx`);
                 }).catch((err)=>{
                         console.log(err);
                 })
