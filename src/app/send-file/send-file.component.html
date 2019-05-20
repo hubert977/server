@@ -9,8 +9,11 @@
                             <span>KONFIGURACJA RAPORTU</span>
                     </mat-toolbar-row>
             </mat-toolbar>
-            <input id="report" type="file">
-            <label for="report" class="report"></label>
+                <form>
+                                <input id="report" type="file" (change)="onFileChange($evt)">
+                                <label for="report" class="report">Wybierz plik</label>
+                </form>
+          
     </header>
 </body>
 </html>
