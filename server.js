@@ -1,25 +1,27 @@
 var mysql = require('mysql');
 var express = require('express');
-var json2xls = require('json2xls');
 var app = express();
 const path = require('path');
 const fs = require('fs-extra');
 const Excel = require('exceljs');
 const workbook = new Excel.Workbook();
+var formidable = require('formidable');
 const cors = require('cors');
+const fileUpload = require('express-fileupload');
+app.use(fileUpload());
 class excel {
     constructor()
     {
-
-    }
-    initialized()  {
-        let correctArray = [];
-        const connection = mysql.createConnection({
+       this.configure = {
             host: '10.10.2.241',
             user: 'sa',
             password: 'Radwag99',
             database: 'pue71'
-        });
+        }
+    }
+    initialized()  {
+        let correctArray = [];
+        const connection = mysql.createConnection(this.configure);
         connection.connect();
             connection.query('SELECT id_comparator from weighting ORDER BY id_comparator DESC LIMIT 1', (error, results, fields) => {
             if (error) throw error;
@@ -35,18 +37,14 @@ class excel {
                          arrayData.push(resultjson[i]);
                          correctArray = [...new Set(arrayvalue)];
                     }
+                    connection.end();
                     that.cyclesiterable(correctArray,arrayData);
                   })
         });
     }
     cyclesiterable(correctArray,arrayData)
     {
-        const connection = mysql.createConnection({
-            host: '10.10.2.241',
-            user: 'sa',
-            password: 'Radwag99',
-            database: 'pue71'
-        });
+        const connection = mysql.createConnection(this.configure);
         connection.connect();
         for(let i=0; i<correctArray.length; i++)
         {
@@ -84,7 +82,8 @@ class excel {
                             next_row = next_row + 4;
                         }
                     }
-                    workbook.xlsx.writeFile(`files/MySampleExportDataSheet.xlsx`);
+                    workbook.xlsx.writeFile(`files/data.xlsx`);
+                    connection.end();
                 }).catch((err)=>{
                         console.log(err);
                 })
@@ -92,6 +91,19 @@ class excel {
         }
     }
 }
+app.get('/download', (req,res)=>{
+    res.download(__dirname + '/files/data.xlsx'); 
+})
+app.post('/file', (req, res) => {
+    console.log(req.file);
+})
+app.get('/',(req,res)=>{
+    res.sendFile( path.resolve(__dirname) + '/dist/index.html');
+})
+app.use(fileUpload());
 app.use(cors());
 const excel_object = new excel();
-app.listen(5000, excel_object.initialized());
+app.listen(5000, setInterval(()=>{
+    excel_object.initialized();
+},20000));
+

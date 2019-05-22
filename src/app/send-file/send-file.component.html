@@ -1,6 +1,5 @@
 <html>
 <head>
-
 </head>
 <body>
     <header>
@@ -9,11 +8,11 @@
                             <span>KONFIGURACJA RAPORTU</span>
                     </mat-toolbar-row>
             </mat-toolbar>
-                <form>
-                                <input id="report" type="file" (change)="onFileChange($evt)">
-                                <label for="report" class="report">Wybierz plik</label>
-                </form>
-          
+                <section class="container-form">
+                                <input id="report" type="file" name="template" (change)="onFileChange($event)">
+                                <label for="report" class="report">Wyślij szablon</label>
+                                <a class="download_button" href="http://10.10.2.127:5000/download"  mat-raised-button >Pobierz Raport</a>               
+                </section>
     </header>
 </body>
 </html>
